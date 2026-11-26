@@ -1,0 +1,23 @@
+{
+  "tag": "smoke4_qcpinn",
+  "model": "qcpinn",
+  "seed": 0,
+  "protocol": "convergence+lbfgs(1400-point refinement, chunked, protocol2 summation order)",
+  "stop_reason": "cap",
+  "adam_epochs_used": 1000,
+  "lbfgs_steps": 500,
+  "lbfgs_evaluations": 524,
+  "refine_interior_points": 1000,
+  "refine_boundary_points_per_edge": 100,
+  "refine_total_points": 1400,
+  "chunk": 500,
+  "params": 771,
+  "err_u_pct_after_adam": 221.97129821777344,
+  "err_f_pct_after_adam": 42.15847396850586,
+  "err_u_pct": 8.230966567993164,
+  "err_f_pct": 2.3188416957855225,
+  "adam_seconds": 91.04201555252075,
+  "lbfgs_seconds": 388.1,
+  "resumed": false,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

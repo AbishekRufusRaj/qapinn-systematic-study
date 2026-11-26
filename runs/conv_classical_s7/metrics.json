@@ -1,0 +1,46 @@
+{
+  "tag": "conv_classical_s7",
+  "classical": true,
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": null
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 7,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "max_epochs",
+  "adam_epochs_used": 25000,
+  "final_ema": 0.012475246118743824,
+  "adam_seconds": 185.5,
+  "lbfgs_seconds": 3.9,
+  "total_seconds": 189.4,
+  "final_total_loss": 0.0006369207403622568,
+  "final_pde_loss": 0.0005260301404632628,
+  "final_ic_loss": 1.0097467566083651e-05,
+  "final_bc_loss": 9.915897862811107e-07,
+  "logged_steps": 25526,
+  "rel_l2": 0.01623513597508573,
+  "rel_l2_shock_region": 0.039874372532746886,
+  "rel_l2_smooth_region": 0.006485210660067747,
+  "spectral_bias_ratio": 6.148508448348592,
+  "shock_half_width": 0.1
+}

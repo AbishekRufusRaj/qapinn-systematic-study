@@ -1,0 +1,15 @@
+{
+  "tag": "sym_qcpinn_s3",
+  "model": "qcpinn",
+  "seed": 3,
+  "protocol": "convergence+lbfgs",
+  "stop_reason": "cap",
+  "adam_epochs_used": 25000,
+  "lbfgs_steps": 500,
+  "params": 771,
+  "err_u_pct": 16.46231460571289,
+  "err_f_pct": 4.050837516784668,
+  "adam_seconds": 3879.3,
+  "lbfgs_seconds": 59.9,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

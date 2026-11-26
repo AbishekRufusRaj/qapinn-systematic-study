@@ -1,0 +1,23 @@
+{
+  "tag": "sym4_qcpinn_s5",
+  "model": "qcpinn",
+  "seed": 5,
+  "protocol": "convergence+lbfgs(1400-point refinement, chunked, protocol2 summation order)",
+  "stop_reason": "converged",
+  "adam_epochs_used": 19500,
+  "lbfgs_steps": 500,
+  "lbfgs_evaluations": 546,
+  "refine_interior_points": 1000,
+  "refine_boundary_points_per_edge": 100,
+  "refine_total_points": 1400,
+  "chunk": 500,
+  "params": 771,
+  "err_u_pct_after_adam": 5.913816452026367,
+  "err_f_pct_after_adam": 3.1122732162475586,
+  "err_u_pct": 1.2055219411849976,
+  "err_f_pct": 0.8224155902862549,
+  "adam_seconds": 2439.014949798584,
+  "lbfgs_seconds": 402.3,
+  "resumed": false,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

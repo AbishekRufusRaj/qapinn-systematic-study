@@ -1,0 +1,33 @@
+{
+  "tag": "seed_classical_s2",
+  "classical": true,
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 2,
+  "adam_seconds": 42.4,
+  "lbfgs_seconds": 3.0,
+  "total_seconds": 45.4,
+  "final_total_loss": 0.0003310909087304026,
+  "final_pde_loss": 0.0003131245030090213,
+  "final_ic_loss": 1.4305295508165727e-06,
+  "final_bc_loss": 3.661118910258665e-07,
+  "logged_steps": 8526
+}

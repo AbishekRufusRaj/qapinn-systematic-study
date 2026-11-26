@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# symmetric_protocol2.sh -- corrected symmetric protocol control.
+# Same design as symmetric_protocol.sh, but runs protocol2_qcpinn.py, whose
+# L-BFGS phase refines on a domain-scale batch (4,000 residual + 4 x 1,000
+# boundary) instead of the authors' 64-point training mini-batch, and which
+# records the error after Adam as well as after refinement.
+# Ten seeds per arm; resumable; writes to runs/sym2_*.
+set -u
+PY="${PY:-external/venv_qcpinn/bin/python}"; JOBS="${JOBS:-4}"
+SEEDS="${SEEDS:-0 1 2 3 4 5 6 7 8 9}"
+ARMS="${ARMS:-model2 qcpinn}"   # set ARMS=model2 for the fast classical-only check
+mkdir -p logs_extend; J=./.sym2_jobs.txt; : > $J
+for s in $SEEDS; do
+  for m in $ARMS; do
+    echo "sym2_${m}_s$s|--model $m --seed $s" >> $J
+  done
+done
+export PY
+tr '\n' '\0' < $J | xargs -0 -P "$JOBS" -I {} bash -c '
+  tag="${1%%|*}"; args="${1#*|}"
+  [ -f "runs/$tag/replication.json" ] && { echo "[skip] $tag"; exit 0; }
+  t0=$(date +%s)
+  "$PY" protocol2_qcpinn.py --tag "$tag" $args > "logs_extend/$tag.log" 2>&1
+  echo "[$tag] $(grep -o "err_u = .*" logs_extend/$tag.log | tail -1)  $(( ($(date +%s)-t0)/60 ))m"
+' _ {}
+rm -f $J; echo "SYMMETRIC2 finished"

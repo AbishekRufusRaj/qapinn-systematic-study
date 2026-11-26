@@ -1,0 +1,49 @@
+{
+  "tag": "init_ring_L2_s6",
+  "classical": false,
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 2,
+    "entangler_depth": 1,
+    "entangler": "ring",
+    "encoding": "angle",
+    "init_scale": 0.1
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 8,
+    "classical": 2641,
+    "total": 2649
+  },
+  "seed": 6,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only -287.2% improvement over last 3000 epochs)",
+  "adam_epochs_used": 16500,
+  "final_ema": 0.12829960196470333,
+  "adam_seconds": 1679.6,
+  "lbfgs_seconds": 62.4,
+  "total_seconds": 1742.1,
+  "final_total_loss": 0.032960448414087296,
+  "final_pde_loss": 0.026557696983218193,
+  "final_ic_loss": 0.0005494350334629416,
+  "final_bc_loss": 9.084017801797017e-05,
+  "logged_steps": 17036,
+  "rel_l2": 0.2538207766312674,
+  "rel_l2_shock_region": 0.6335388938608807,
+  "rel_l2_smooth_region": 0.09028313774148868,
+  "spectral_bias_ratio": 7.017244966329349,
+  "shock_half_width": 0.1
+}

@@ -1,0 +1,38 @@
+{
+  "tag": "reupload_L2_q4",
+  "classical": false,
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 2
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 8,
+    "classical": 2641,
+    "total": 2649
+  },
+  "seed": 0,
+  "adam_seconds": 633.9,
+  "lbfgs_seconds": 44.2,
+  "total_seconds": 678.1,
+  "final_total_loss": 0.03233284130692482,
+  "final_pde_loss": 0.025849943980574608,
+  "final_ic_loss": 0.00062628707382828,
+  "final_bc_loss": 2.200264498242177e-05,
+  "logged_steps": 8552,
+  "rel_l2": 0.1953466447896247,
+  "rel_l2_shock_region": 0.47852695030565456,
+  "rel_l2_smooth_region": 0.07930882344712413,
+  "spectral_bias_ratio": 6.03371642027564,
+  "shock_half_width": 0.1
+}

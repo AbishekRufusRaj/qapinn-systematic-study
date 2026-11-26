@@ -1,0 +1,47 @@
+{
+  "tag": "ctrl_classical_g2.8868_s4",
+  "pde": "burgers",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": 2.8868
+  },
+  "classical": true,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 4,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only -5.5% over last 3000 epochs)",
+  "adam_epochs_used": 10000,
+  "final_ema": 0.009743825726227904,
+  "adam_seconds": 81.3,
+  "lbfgs_seconds": 4.4,
+  "total_seconds": 85.7,
+  "final_total_loss": 9.507531649433076e-05,
+  "final_pde_loss": 8.177917334251106e-05,
+  "final_ic_loss": 1.0154598157896544e-06,
+  "final_bc_loss": 3.1415476087204297e-07,
+  "converged": true,
+  "checkpoints": [],
+  "logged_steps": 10524
+}

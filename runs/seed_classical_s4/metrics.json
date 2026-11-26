@@ -1,0 +1,38 @@
+{
+  "tag": "seed_classical_s4",
+  "classical": true,
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 4,
+  "adam_seconds": 178.0,
+  "lbfgs_seconds": 7.3,
+  "total_seconds": 185.3,
+  "final_total_loss": 0.00021176604786887765,
+  "final_pde_loss": 0.0001848076208261773,
+  "final_ic_loss": 1.7115646642196225e-06,
+  "final_bc_loss": 9.842786994340713e-07,
+  "logged_steps": 8527,
+  "rel_l2": 0.01422173584432839,
+  "rel_l2_shock_region": 0.03700476689962997,
+  "rel_l2_smooth_region": 0.0027091518844413317,
+  "spectral_bias_ratio": 13.659170278399106,
+  "shock_half_width": 0.1
+}

@@ -1,0 +1,20 @@
+{
+  "tag": "sym2_model2_s6",
+  "model": "model2",
+  "seed": 6,
+  "protocol": "convergence+lbfgs(domain-scale refinement)",
+  "stop_reason": "converged",
+  "adam_epochs_used": 4000,
+  "lbfgs_steps": 500,
+  "lbfgs_evaluations": 9,
+  "refine_residual_points": 4000,
+  "refine_boundary_points_per_edge": 1000,
+  "params": 2751,
+  "err_u_pct_after_adam": 100.33770751953125,
+  "err_f_pct_after_adam": 100.0,
+  "err_u_pct": 100.01756286621094,
+  "err_f_pct": 99.99998474121094,
+  "adam_seconds": 9.4,
+  "lbfgs_seconds": 0.2,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

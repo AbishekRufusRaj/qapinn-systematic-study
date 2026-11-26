@@ -1,0 +1,53 @@
+{
+  "tag": "hh_classical_s2",
+  "pde": "helmholtz",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": null
+  },
+  "classical": true,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 2,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only -14.6% over last 3000 epochs)",
+  "adam_epochs_used": 21000,
+  "final_ema": 16.642986774558523,
+  "adam_seconds": 262.8,
+  "lbfgs_seconds": 7.8,
+  "total_seconds": 270.6,
+  "final_total_loss": 2.85558819770813,
+  "final_pde_loss": 1.8410507440567017,
+  "final_ic_loss": 0.04948832094669342,
+  "final_bc_loss": 0.05196543037891388,
+  "converged": false,
+  "checkpoints": [],
+  "logged_steps": 21534,
+  "rel_l2": 0.161732287212192,
+  "checkpoint_epoch": null,
+  "rel_l2_boundary_band": 0.41275110753550337,
+  "rel_l2_interior": 0.12114610563010834,
+  "hard_easy_ratio": 3.407052215081049,
+  "region_definition": "boundary band |x1|>0.9 or |x2|>0.9"
+}

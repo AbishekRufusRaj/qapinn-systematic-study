@@ -1,0 +1,41 @@
+{
+  "tag": "rep_model2_paperinit_s7",
+  "model": "model2",
+  "seed": 7,
+  "epochs": 20000,
+  "params": 2751,
+  "init": "paper",
+  "err_u_pct": 6.069050312042236,
+  "err_f_pct": 2.2443535327911377,
+  "seconds": 52.6,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, unmodified",
+  "config": {
+    "batch_size": 64,
+    "epochs": 20000,
+    "lr": 0.005,
+    "seed": 7,
+    "print_every": 100,
+    "log_path": "/Users/abishekrufus/Documents/claude/qapinns/qapinn_systematic_study/runs/rep_model2_paperinit_s7/authors_log",
+    "input_dim": 2,
+    "output_dim": 1,
+    "num_qubits": 5,
+    "hidden_dim": 50,
+    "num_quantum_layers": 1,
+    "classic_network": [
+      2,
+      50,
+      1
+    ],
+    "q_ansatz": "cascade",
+    "mode": "hybrid",
+    "activation": "tanh",
+    "shots": null,
+    "problem": "helmholtz",
+    "solver": "Classical",
+    "device": "cpu",
+    "method": "None",
+    "cutoff_dim": 20,
+    "class": "CVNeuralNetwork1",
+    "encoding": "angle"
+  }
+}

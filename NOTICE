@@ -1,0 +1,42 @@
+NOTICE
+======
+
+This repository contains the artefact for:
+
+    "What Moves a Quantum Advantage? Initialisation, Training Protocol and
+     Circuit Ablation in Hybrid Quantum-Classical PINNs"
+    NQComp 2027, Paper ID 583.
+
+UPSTREAM WORK THIS STUDY REPLICATES
+-----------------------------------
+
+A substantial part of this study is a replication of, and a set of controls
+around, the following work, and would not exist without it:
+
+    A. Farea, S. Khan and M. S. Celebi,
+    "QCPINN: Quantum-Classical Physics-Informed Neural Networks for Solving
+     PDEs", Mach. Learn.: Sci. Technol., 2025; arXiv:2503.16678.
+
+    Code:    https://github.com/afrah/QCPINN
+    Commit:  0dc467be8b16cccaa5101e63fe8cdf8d18bfdcb9  (2025-12-15)
+    Licence: MIT License, Copyright (c) 2025 Afrah Farea
+
+That code is NOT redistributed here. It is obtained by running
+`setup_qcpinn.sh`, which clones the upstream repository at the exact commit
+above. All runs in this study that use it ran it UNMODIFIED, in its own pinned
+environment, adding only a per-run random seed.
+
+Where this study reports a result for the upstream model, it is a measurement
+of their released implementation, not a reimplementation of it. The published
+result reproduces: we find no discrepancy with their reported measurement.
+
+SCOPE OF OUR OWN CONTRIBUTION
+-----------------------------
+
+Our contribution is the experimental design around that code -- the matched
+convergence protocol, the symmetric control, the initialisation and ablation
+studies, the third equation, the hyperparameter sweep, the exact statistical
+tests, and the verification suites -- together with our own independent
+implementation (`qapinn_model.py`, `train.py`, and the `pm_*` runs), which is
+architecturally distinct from the upstream model and is described in Table I
+of the paper.

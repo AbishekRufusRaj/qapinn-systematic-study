@@ -1,0 +1,541 @@
+\documentclass[conference,a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{url}
+
+\begin{document}
+
+\title{What Moves a Quantum Advantage? Initialisation, Training Protocol and
+Circuit Ablation in Hybrid Quantum-Classical PINNs}
+
+\author{
+\IEEEauthorblockN{J Abishek Rufus Raj}
+\IEEEauthorblockA{\textit{CHRIST (Deemed to be University), Kengeri Campus} \\
+Bengaluru, India \\
+abishekrufusraj@gmail.com}
+\and
+\IEEEauthorblockN{Mary Anita E A}
+\IEEEauthorblockA{\textit{CHRIST University} \\
+Bengaluru, India \\
+maryanita.ea@christuniversity.in}
+}
+
+\maketitle
+
+\begin{abstract}
+Hybrid quantum-classical physics-informed neural networks (PINNs) are reported to match
+classical accuracy at a fraction of the trainable parameters. We ask what such a
+comparison actually measures. Using a published quantum PINN's own released
+implementation, unmodified, on its own two-dimensional Helmholtz problem, we reproduce
+its result: a median relative $L_2$ error of 5.16\% over ten seeds against a published
+$6.69 \pm 1.51\%$, beating its classical baseline at 9.88\% (exact permutation test,
+$p = 0.0044$, Cliff's $\delta = -0.84$). We then vary two implementation choices that the
+comparison holds fixed. Initialising the classical baseline as the paper's text describes,
+rather than as its code does, halves the effect size to $\delta = -0.50$. Training the
+same baseline to a convergence criterion instead of a fixed epoch budget takes it to
+0.70\%, a factor of seventeen, where the advantage claimed is a factor of about two.
+Under the original protocol, a Xavier-initialised classical PINN already matches the
+quantum model (4.63\% against 5.16\%, $p = 0.32$). A fully symmetric control --- both arms
+from the authors' code, one protocol, ten seeds --- puts the quantum model ahead of
+\emph{their} classical solver (1.73\% against 4.30\%, $p = 0.0068$), yet our own
+implementation of that same 2{,}751-parameter network reaches 0.70\% under the identical
+criterion, so the quantum lead measures the baseline's implementation and not its
+architecture. Ablation locates what the circuit
+contributes: in our own architecture, replacing it with a classical map of the same shape
+changes nothing ($p = 0.79$ and $p = 0.62$ for two ansaetze, eight seeds each), while in
+the published architecture the circuit is load-bearing but works frozen at initialisation
+(7.84\%, no failures). We conclude that reported quantum advantages in this setting are
+sensitive to baseline initialisation and training protocol, and that neither can be left
+unreported.
+\end{abstract}
+
+\begin{IEEEkeywords}
+quantum machine learning, physics-informed neural networks, variational quantum circuits,
+reproducibility, ablation, experimental protocol
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+A physics-informed neural network (PINN) trains a network to satisfy a differential
+equation at sampled collocation points, using the equation itself as the training
+signal~\cite{raissi}. A hybrid quantum-classical PINN replaces part of that network with a
+variational quantum circuit. The motivation is representational: an angle-encoded circuit
+computes a truncated Fourier series whose accessible frequencies are fixed by its encoding
+gates rather than by its trainable weights~\cite{schuld}, so a circuit might express
+oscillatory solution structure with fewer parameters than a classical layer.
+
+Reported results support this. A recent hybrid quantum-classical PINN obtains comparable
+accuracy using 10--30\% of the trainable parameters of a classical
+baseline~\cite{qcpinn}. Such comparisons, however, fix a number of implementation choices
+that are rarely varied and sometimes not reported: how each arm is initialised, how long
+each arm is trained, and how the stopping point is decided. If those choices move the
+result by as much as the architecture does, the comparison does not measure what it is
+taken to measure.
+
+This paper asks how much they move it. Our contributions are:
+
+\begin{enumerate}
+\item A replication of a published quantum PINN comparison using the authors' released
+implementation, unmodified, on their own problem, with recorded seeds. The published
+result reproduces (Section~\ref{sec:rep}).
+\item A measurement of how far that comparison moves under two choices it holds fixed:
+the baseline's initialisation, which halves the effect size, and the training protocol,
+which moves the baseline by a factor of seventeen
+(Sections~\ref{sec:init}--\ref{sec:proto}).
+\item A symmetric control that trains both arms under one protocol, and the implementation
+gap it exposes in the published classical baseline (Section~\ref{sec:sym}).
+\item An ablation, with a frozen-circuit control, separating what the circuit contributes
+in two different hybrid architectures (Section~\ref{sec:abl}).
+\end{enumerate}
+
+All comparisons use repeated seeds and exact permutation tests; effect sizes are reported
+alongside $p$-values throughout.
+
+\section{Related Work}
+
+The expressivity argument for quantum layers rests on the encoding-determined frequency
+spectrum of variational circuits~\cite{schuld}. Against it stands trainability: gradient
+variance in random parameterised circuits vanishes exponentially in qubit
+count~\cite{mcclean}, an effect that depends on whether the cost function is global or
+local~\cite{cerezo}, and which is commonly mitigated by initialising the circuit close to
+the identity~\cite{grant}. Expressibility and entangling capability~\cite{sim} and
+dimensional expressivity analysis~\cite{funcke} provide standard vocabulary for comparing
+ansaetze, and we use both.
+
+On the classical side, PINN training failures are optimisation failures rather than
+capacity failures~\cite{krishnapriyan}, and a line of work on learned or enhanced
+initialisation shows that initial weights drive catastrophic convergence failures in
+classical PINNs. Benchmarking studies of quantum machine learning outside the PINN setting
+report that classical models frequently match or exceed quantum ones, and that removing
+entanglement often leaves performance unchanged~\cite{bowles}. Our ablation applies that
+style of control to a published quantum PINN rather than to classifiers.
+
+\section{Experimental Protocol}
+
+\textbf{Problems.} Two settings are used. For the replication we use the
+two-dimensional Helmholtz problem of~\cite{qcpinn}: $u_{x_1x_1} + u_{x_2x_2} + \lambda u
+= f$ on $[-1,1]^2$ with $\lambda = 1$, exact solution $u^\star = \sin(\pi
+x_1)\sin(4\pi x_2)$ and homogeneous Dirichlet boundaries. For the ablation of our own
+architecture we use the viscous Burgers' equation with $\nu = 0.01/\pi$, the standard PINN
+stress test.
+
+\textbf{Architectures.} The replicated model places a five-qubit angle-cascade circuit
+(15 quantum parameters) between two small classical blocks, 771 parameters in total, and
+is compared against a 2{,}751-parameter classical network~\cite{qcpinn}. Our own
+architecture instead places a four-qubit circuit at the input, feeding a seven-layer
+classical stack; two entangling blocks are used, a ring of $R_X$ rotations with CNOTs (8
+quantum parameters) and a strongly entangling block of full rotations (24), giving 2{,}649
+and 2{,}665 parameters against a 3{,}021-parameter classical PINN.
+
+\textbf{Training.} Two protocols are compared explicitly. \emph{Theirs} is the published
+recipe: Adam at $5\times10^{-3}$, mini-batches of 64, a fixed budget of 20{,}000 epochs
+with a plateau scheduler, and no second-order phase. \emph{Ours} terminates on a
+convergence criterion --- an exponential moving average of the loss improving by less than
+3\% over 3{,}000 epochs --- followed by 500 L-BFGS steps, a two-stage schedule standard in
+the PINN literature~\cite{raissi}.
+
+\textbf{Statistics.} Sample sizes are small, so all tests are exact: two-sided permutation
+tests on the difference in medians, enumerated completely, with the observed labelling
+counted in the numerator. Effect sizes are Cliff's $\delta$~\cite{cliff}. Ten seeds per arm are used in
+the replication, matching the source; eight seeds per arm elsewhere. Seeds are recorded;
+the released implementation we replicate carries a seed field that its code never applies,
+so its published runs cannot be reproduced individually.
+
+\begin{table*}[t]
+\caption{Full configuration of both hybrid architectures. The replicated column
+describes the released implementation of~\cite{qcpinn} as run here; the left column
+describes this work. Parameter counts are read from the trained models.}
+\label{tab:config}
+\centering
+\scriptsize
+\begin{tabular}{p{0.17\textwidth}p{0.38\textwidth}p{0.36\textwidth}}
+\hline
+& \textbf{This work (circuit at the input)} & \textbf{Replicated~\cite{qcpinn} (circuit in the middle)} \\
+\hline
+Qubits & 4 & 5 \\
+Circuit depth & 2 data-reuploading layers, entangler depth 1 & 1 quantum layer \\
+Encoding & angle, $R_X$; the pair $(x,t)$ tiled across the 4 wires, re-encoded before each layer & angle, $R_X$, applied once \\
+Ansatz & \emph{ring}: one $R_X$ per wire then a CNOT ring (\textsc{BasicEntanglerLayers}); \emph{strong}: $R_ZR_YR_Z$ per wire then CNOTs (\textsc{StronglyEntanglingLayers}) & \emph{cascade}: one $R_X$ and one $R_Z$ per wire, then a ring of CRX gates \\
+Observables & $\langle Z_i\rangle$ on each of the 4 wires & $\langle Z_i\rangle$ on each of the 5 wires \\
+Classical blocks & none before; 7 hidden layers of width 20 after & $2\!\to\!50\!\to\!5$ before, $5\!\to\!50\!\to\!1$ after \\
+Quantum parameters & 8 (ring), 24 (strong) & 15 \\
+Total parameters & 2{,}649 (ring), 2{,}665 (strong); classical control 3{,}021 & 771; classical baseline 2{,}751 \\
+Quantum initialisation & $\mathcal{U}[0,2\pi)$ (library default) or $\mathcal{N}(0,0.1)$ (near-identity~\cite{grant}) & Xavier~\cite{glorot}, as stated by the source \\
+Classical initialisation & Xavier~\cite{glorot} & Xavier~\cite{glorot} \\
+Optimiser & Adam, $10^{-3}$, then 500 L-BFGS steps (strong-Wolfe) & Adam, $5\times10^{-3}$, \textsc{ReduceLROnPlateau}, gradient clipping at 1.0 \\
+Training points & 1{,}400 per epoch (800 interior, 300 shock-refined, 150 initial, 150 boundary), redrawn every epoch & mini-batches of 64, redrawn every epoch \\
+Loss weights & residual $+\,10\times$ (initial $+$ boundary) & residual $+\,10\times$ boundary \\
+Epochs & convergence criterion (EMA improving by $<3\%$ over 3{,}000 epochs), cap 25{,}000 & fixed 20{,}000 \\
+Simulation & PennyLane 0.44 \texttt{default.qubit}, analytic (no shots), backpropagation & PennyLane 0.29 \texttt{default.qubit}, analytic (no shots) \\
+\hline
+\end{tabular}
+\end{table*}
+
+\textbf{Simulation environment.} All runs are noiseless statevector simulations on CPU.
+This work uses PennyLane~\cite{pennylane} 0.44 with PyTorch 2.10 on Python 3.13; the replication runs the
+authors' released code unmodified in its own environment, PennyLane 0.29 with PyTorch 2.0.1
+on Python 3.9, at commit \texttt{0dc467be}. Both execute on one 8-core Apple M2 with 16\,GB
+of memory, two threads per run, four runs concurrently. No quantum hardware is used, and
+no shot noise is simulated: every expectation value is exact.
+
+\section{Replicating a Published Comparison}
+\label{sec:rep}
+
+We ran the authors' public implementation~\cite{qcpinn} (MIT licence) without
+modification, in their pinned package versions, on their Helmholtz problem, adding only a
+per-run seed. Fig.~\ref{fig:one} shows every run.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{fig1.pdf}
+\caption{Per-seed relative $L_2$ error on the Helmholtz problem; every point is one
+training run, bars are medians, and the axis is logarithmic. The published comparison is
+the first two columns. Columns three to five vary one choice at a time: the baseline's
+initialisation, the baseline trained to a convergence criterion, and a classical PINN
+under the published protocol. The two columns right of the rule are the symmetric control
+of Section~\ref{sec:sym}, where both arms come from the authors' code and differ by
+nothing but the model; the classical arm's three runs near 100\% are dead
+initialisations.}
+\label{fig:one}
+\end{figure*}
+
+The published result reproduces. The quantum model reaches a median 5.16\% against a
+published $6.69 \pm 1.51\%$, solves the problem on all ten seeds, and beats its classical
+baseline at 9.88\% ($p = 0.0044$, $\delta = -0.84$). We find no discrepancy with the
+reported measurement.
+
+Two properties of the comparison are worth recording. First, the baseline is unstable:
+three of its ten seeds fail outright, and those failures carry the mean. Second, the
+efficiency is in parameters, not compute. A quantum run takes 78 minutes on a CPU against
+one minute for the classical baseline, so a $3.5\times$ parameter saving costs roughly
+$80\times$ the energy in simulation.
+
+\section{Initialisation Inside the Baseline}
+\label{sec:init}
+
+The paper states that its classical layers use Xavier initialisation. Its released code
+applies Xavier to the pre-processor only, leaving the remaining layers at framework
+defaults. We therefore re-ran the baseline with Xavier applied to every classical layer,
+as the text describes, changing nothing else.
+
+\begin{table}[t]
+\caption{The published comparison under two initialisations of its classical baseline.
+Ten seeds per arm.}
+\label{tab:init}
+\centering
+\footnotesize
+\begin{tabular}{lccc}
+\toprule
+Baseline init. & Median & Fails & $\delta$ vs.\ quantum \\
+\midrule
+as released (first layer) & 9.88\% & 3/10 & $-0.84$ ($p{=}0.0044$) \\
+as described (all layers) & 8.47\% & 1/10 & $-0.50$ ($p{=}0.0305$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:init} shows the effect. One initialisation line, internal to one arm,
+halves the effect size and removes two of the three failures. The quantum model remains
+ahead, but the magnitude of the advantage is a function of a choice the comparison does
+not vary.
+
+This is consistent with what initialisation does to a purely classical PINN under our own
+protocol on Burgers': rescaling the initial weights to a Xavier-equivalent gain changes the
+seed-to-seed standard deviation by a factor of 23.1 and takes the failure count from three
+in eight to zero. Initialisation is not a detail of implementation in this setting; it is
+an experimental factor of the same order as the architectural differences being reported.
+
+\section{Training Protocol}
+\label{sec:proto}
+
+The published protocol stops at a fixed budget. We retrained the same classical baseline
+--- same architecture, same parameter count, same problem --- under a convergence criterion
+with an L-BFGS phase. It reaches a median 0.70\% (Fig.~\ref{fig:one}), against the 12.12\%
+reported and the 9.88\% we reproduce.
+
+The baseline was therefore evaluated roughly a factor of seventeen from its own
+capability, while the advantage being claimed is a factor of about two. We also ran the
+comparison the other way: under the \emph{published} protocol, a Xavier-initialised
+classical PINN reaches 4.63\% against the quantum model's 5.16\%, a difference that is not
+established at eight seeds ($p = 0.3158$). The quantum advantage does not survive fixing
+either the baseline's initialisation or its training.
+
+What follows from these measurements is that the published baseline was trained far short
+of its capability. Whether the advantage survives training both arms alike is a separate
+question, and Section~\ref{sec:sym} answers it directly.
+
+\section{A Symmetric Control}
+\label{sec:sym}
+
+Sections~\ref{sec:init}--\ref{sec:proto} vary one arm at a time, so the standing objection
+is that no single experiment trains both arms alike. We ran that control directly: the
+authors' quantum solver and the authors' classical solver, from the same unmodified
+release, under one protocol --- the convergence criterion of Section~\ref{sec:proto}, a
+500-step L-BFGS phase refined on 1{,}400 points, identical evaluation grid, seeds 0--9.
+Nothing differs between the arms except the model.
+
+The quantum arm reaches a median 1.73\% relative $L_2$ error (IQR 1.61--2.01, range
+1.21--2.31) with no failures in ten seeds. The classical arm reaches a median 4.30\%, but
+its distribution is bimodal: seven seeds land between 1.21\% and 7.02\%, and three (seeds
+5, 6 and 9) finish near 100\% with a residual error of 99.99998\%, meaning the network
+output is identically zero. Those same three seeds fail identically under the published
+protocol, so they are dead initialisations rather than an artefact of the stopping rule,
+and we report rather than discard them.
+
+Over all ten seeds the difference is significant: median $-2.57$ pp, exact permutation
+$p = 0.0068$ over all $\binom{20}{10} = 184{,}756$ splits, Cliff's $\delta = -0.64$. That
+result is carried substantially by the three dead seeds. Among the seven seeds where the
+classical arm trains at all the medians are 1.77\% against 3.43\%, $\delta = -0.43$, and
+the difference is not established ($p = 0.0583$); the failure counts alone, 0/10 against
+3/10, are not established either (Fisher $p = 0.2105$). The defensible statement is that
+under a symmetric protocol the quantum model is more \emph{reliable} than this classical
+arm, and that its accuracy margin over the seeds that train is a medium effect ten seeds
+cannot resolve.
+
+It does not follow that the circuit beats the architecture. The same 2{,}751-parameter
+classical network, on the same equation under the same convergence criterion and L-BFGS
+phase, but implemented in our own trainer with a 1{,}400-point collocation budget, reaches
+a median 0.70\% over eight seeds (range 0.53--0.84) with no failures: better than the
+quantum arm by a factor of 2.5, and better than the authors' own classical solver by a
+factor of six. The quantum lead in the symmetric control is therefore a property of the
+classical baseline \emph{as implemented}, not of the classical architecture --- the same
+conclusion Sections~\ref{sec:init}--\ref{sec:proto} reach from the other direction. The
+quantum arm also costs a median 51.7 minutes against 0.86, a factor of 60
+(Section~\ref{sec:cost}).
+
+\textbf{Does the lead survive other training settings?} The symmetric protocol fixes one
+optimiser, learning rate and batch size, and a lead that held only at that point in
+hyperparameter space would be an artefact of it. We therefore re-ran both arms under five
+further settings --- SGD with momentum, RMSprop, learning rates of $10^{-3}$ and
+$10^{-2}$, and a batch of 256 --- at three seeds each, thirty runs in all. The quantum arm
+reaches the lower median in every setting where median and mean agree on the ordering,
+five of six; RMSprop splits, because one classical seed there fails outright at 100.7\%
+and so dominates that cell's mean. Three seeds cannot establish any single comparison ---
+the exact two-sided permutation floor is $2/\binom{6}{3} = 0.10$ --- so we report
+direction rather than per-cell significance, and the sign test over the five agreeing
+cells returns $p = 0.0625$, itself the smallest value five cells admit. Pooled across all
+six settings the failure asymmetry of this section reappears where we were not looking for
+it: the quantum arm's worst run of eighteen is 9.71\%, the classical arm's worst is
+100.7\%, and dead initialisations run 0/18 against 2/18 (Fisher $p = 0.4857$). The
+direction is consistent across every setting we varied; its magnitude is not resolved at
+this seed count.
+
+\section{What Does the Circuit Contribute?}
+\label{sec:abl}
+
+The direct test of whether a quantum layer earns its place is to remove it and put a
+classical map of the same shape in the same slot~\cite{bowles}. Both stand-ins we use
+carry slightly more parameters than the circuit they replace, so the classical side is
+favoured.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{fig2.pdf}
+\caption{Circuit ablation in two hybrid architectures. (a) With the circuit at the input
+of a deep classical stack, removing it changes nothing. (b) With the circuit inside a
+five-unit bottleneck, removing it is fatal, but freezing its weights at initialisation is
+not. Note the logarithmic scale.}
+\label{fig:two}
+\end{figure}
+
+The two architectures answer differently (Fig.~\ref{fig:two}). In our architecture, where
+the circuit feeds a deep classical stack, replacing it with a linear map changes nothing
+measurable: 3.73\% to 3.23\% for the ring ansatz ($p = 0.79$) and 3.33\% to 2.69\% for the
+strongly entangling one ($p = 0.62$), with the ablated models marginally ahead. Every
+quantum-assisted result we obtained in that architecture came from a model whose circuit
+could have been deleted.
+
+In the published architecture the circuit is load-bearing: both classical stand-ins fail
+to train at all, never bringing the residual below $\sim\!5\times10^3$ where the circuit
+brings it to about 2. A frozen-circuit control separates two explanations. Keeping the
+circuit but freezing its fifteen weights at initialisation still solves the problem on all
+ten seeds at 7.84\%, against 5.16\% trained ($p = 0.0032$). The circuit's contribution
+there is therefore mostly as a \emph{fixed} nonlinear map conditioning a narrow
+bottleneck; training its quantum parameters is worth about 2.7 percentage points on top.
+
+Two supporting measurements agree. Across circuit sizes from two to eight qubits, the
+circuit receives between 0.06\% and 0.4\% of the gradient norm, the remainder going to the
+classical weights. And the strongly entangling ansatz carries redundant parameters by
+construction: probing the Jacobian of its output gives about nine effective directions from
+24 parameters, with its final $R_Z$ unobservable before a Pauli-$Z$ measurement, the
+kind of superfluous parameter dimensional expressivity analysis is designed to
+detect~\cite{funcke}.
+
+\section{Architecture and Initialisation Interact}
+
+If initialisation merely shifted every architecture equally, comparisons at one fixed
+choice would still rank architectures correctly. It does not. On the Helmholtz problem,
+with eight seeds per arm under our protocol, near-identity initialisation leaves the
+strongly entangling ansatz at 7.54\% and takes the ring ansatz to 66.06\%, failing on
+seven seeds of eight. The ansatz contrast under that initialisation is the largest effect
+we measure ($\delta = 0.94$, $p = 0.0031$, Holm-adjusted~\cite{holm} 0.019 within a family of six).
+The same interaction, in the same direction, appears on Burgers'.
+
+The mechanism follows from the gate algebra. The ring's trainable gates are $R_X$
+rotations, the same axis as the encoding, so $R_X(w)R_X(f) = R_X(f+w)$ and its weights act
+only as additive offsets to the encoding angles; it can generate no rotation about $Y$ or
+$Z$. Near-identity initialisation sets those offsets near zero. The strongly entangling
+block, rotating about all three axes, is not so constrained.
+
+\section{A Third Equation, and the Circuit's Components}
+\label{sec:third}
+
+Two equations cannot separate a property of hybrid PINNs from a property of the
+Helmholtz problem, so we add a third: the one-dimensional heat equation, under the
+convergence protocol of Section~\ref{sec:proto}, this work's architecture, eight seeds per
+arm. The ordering of the other two equations reproduces. The classical network reaches a
+median 0.33\%, the strong ansatz 0.48\% and the ring ansatz 0.67\%, in that order on the
+mean as well as the median. The classical arm beats the ring circuit at the smallest
+$p$ this design admits ($p = 40/12{,}870 = 0.0031$, $\delta = +0.88$) and leads the strong
+circuit without reaching significance ($p = 0.0796$, $\delta = +0.66$). Three equations,
+one ranking.
+
+\textbf{Depth.} Doubling the variational depth from two layers to four buys nothing on
+Burgers'. The strong ansatz is unmoved --- 3.33\% to 3.43\% ($p = 0.9378$) --- for twice
+the circuit parameters, and the ring ansatz does not improve either, its median and mean
+both moving the wrong way (3.73\% to 9.44\%, $p = 0.1064$). Whatever the circuit
+contributes here, more of it does not contribute more.
+
+\textbf{Entanglement structure.} The strong ansatz carries three rotation axes per wire
+and twenty-four circuit parameters against the ring's single axis and eight. It reaches
+the lower median on all three equations --- 3.33\% against 3.73\% on Burgers', 8.90\%
+against 17.99\% on Helmholtz, 0.48\% against 0.67\% on heat --- but no single comparison
+is established at eight seeds ($p = 0.79$, $0.067$ and $0.13$). The direction is
+consistent across three equations; the magnitude is not resolved by this many seeds.
+
+\textbf{Qubit count.} We do not vary it at a seed count that would support a claim. The
+runs we hold at other circuit widths are single-seed, and this study's standard is eight;
+we therefore report no number for them. This is the one circuit component we leave open,
+and the released configurations are sufficient to run it.
+
+\section{Costs: Parameters, Wall-Clock and Energy}
+\label{sec:cost}
+
+Reports in this area often state a parameter saving and leave the reader to assume it is a
+saving. The three costs move in opposite directions, so we separate them.
+
+\textbf{Parameters.} The saving is real. The replicated hybrid reaches 5.16\% with 771
+parameters where its classical baseline needs 2{,}751 for 9.88\%, a $3.6\times$ reduction
+at better accuracy under the published protocol. In our own architecture the saving is
+negligible: the circuit replaces so little of the network that 2{,}649 parameters stand
+against a 3{,}021-parameter control, $1.14\times$.
+
+\textbf{Wall-clock.} The saving inverts, by two orders of magnitude.
+Table~\ref{tab:cost} gives medians over the seeds of each arm. Simulating a 5-qubit
+circuit for 20{,}000 epochs costs 71.0 minutes against 0.8 minutes for the classical
+baseline, $89\times$; our 4-qubit circuit costs $17\times$ its classical control on
+Burgers' and $15\times$ on Helmholtz. The circuit ablations locate that cost precisely:
+replacing the circuit with a classical map of the same width leaves accuracy unchanged on
+Burgers' (3.73\% to 3.23\%) while returning the run to 2.6 minutes from 34.3.
+
+\textbf{Energy.} We did not meter power, so we report no absolute figures. Every arm ran
+on the same processor at the same thread count and saturated it, so to the accuracy of
+that assumption energy is proportional to wall-clock and the ratios above carry over. We
+state this as an inference, not a measurement.
+
+\textbf{What a hardware cost would be instead.} None of these wall-clock figures is a
+quantum runtime, and they should not be read as predictions of one. Simulation cost grows
+exponentially in qubit count, which is the reason the figures above are large; hardware
+cost does not, and would instead be dominated by circuit executions, shot noise and queue
+latency, none of which appear here. A 4- or 5-qubit circuit of depth 1--2 is small enough
+that per-shot execution would be fast, but obtaining the gradients these models train on
+would require many thousands of circuit executions per epoch, and the analytic
+expectation values used throughout this study would have to be replaced by shot estimates.
+Whether the parameter saving survives that substitution is an open question which our
+measurements do not address.
+
+\begin{table}[t]
+\caption{Median cost and accuracy per arm, over 10 seeds for the replication and 8
+elsewhere. Wall-clock is total time for the arm's own protocol, read from the run
+artefacts. Quantum parameters are a subset of the total.}
+\label{tab:cost}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{1.5pt}
+\begin{tabular}{llrrr}
+\hline
+\textbf{Problem / arm} & \textbf{Circuit} & \textbf{Par.} & \textbf{Min.} & \textbf{Err.\%} \\
+\hline
+\multicolumn{5}{l}{\emph{Helmholtz, published protocol, 20{,}000 epochs}~\cite{qcpinn}} \\
+\quad hybrid & 5 qubits, 15 q.par. & 771 & 71.0 & 5.16 \\
+\quad classical baseline & --- & 2{,}751 & 0.8 & 9.88 \\
+\quad hybrid, circuit frozen & 5 qubits, 0 trained & 771 & 58.7 & 7.84 \\
+\quad hybrid, circuit removed & classical $\tanh$ map & 786 & 1.1 & 1342 \\
+\hline
+\multicolumn{5}{l}{\emph{Burgers', convergence protocol (this work)}} \\
+\quad QAPINN ring & 4 qubits, 8 q.par. & 2{,}649 & 34.3 & 3.73 \\
+\quad QAPINN strong & 4 qubits, 24 q.par. & 2{,}665 & 35.0 & 3.33 \\
+\quad ring, circuit removed & classical map & 2{,}653 & 2.6 & 3.23 \\
+\quad strong, circuit removed & classical map & 2{,}673 & 4.1 & 2.69 \\
+\quad classical control & --- & 3{,}021 & 2.0 & 2.21 \\
+\hline
+\multicolumn{5}{l}{\emph{Helmholtz, convergence protocol (this work)}} \\
+\quad QAPINN strong, near-identity & 4 qubits, 24 q.par. & 2{,}665 & 66.9 & 7.54 \\
+\quad QAPINN ring, near-identity & 4 qubits, 8 q.par. & 2{,}649 & 52.9 & 66.06 \\
+\quad classical control & --- & 3{,}021 & 4.6 & 6.90 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Simulation is not hardware.} Every wall-clock and energy figure in this section is
+CPU statevector simulation, and the quantum arm's cost here is the cost of simulating a
+circuit, not of running one. The two scale in opposite directions: simulation grows
+exponentially in qubit count, where hardware execution would not, so the factor of 60 in
+Table~\ref{tab:cost} is an artefact of the method of evaluation and must not be read as a
+hardware projection. What the simulated figures do establish is the cost of the
+\emph{research} --- the price of obtaining these results at this width --- and the
+parameter counts, which are hardware-independent. A hardware comparison would have to
+account for shot noise, queueing and transpilation, none of which appear here, and we make
+no claim about it.
+
+\section{Limitations}
+
+Our study is a simulation study: four- and five-qubit circuits, three PDEs, statevector
+simulation on a CPU, no quantum hardware --- as in every comparable study we examined. The
+symmetric control of Section~\ref{sec:sym} is confined to one equation and to the authors'
+own implementation of both arms; we have not run it on Burgers' nor against our own
+quantum models, and at ten seeds per arm the accuracy margin among non-failing seeds
+remains a medium effect we cannot resolve. Our own
+classical arm is also not the strongest classical model available: on Helmholtz the
+replicated 2{,}751-parameter network reaches 0.70\% under our protocol where our deeper
+network reaches 4.31\%, which makes our quantum-versus-classical comparisons conservative
+rather than favourable. Finally, at eight seeds an exact median-difference test has an
+attainable $p$-floor of $40/12{,}870 = 0.0031$; ten seeds per arm are required for such a
+test to clear a correction over twenty comparisons, and we report where that bound binds.
+
+\section{Conclusion}
+
+A published quantum-classical PINN advantage reproduces exactly under its authors' own
+code, and then moves by half its effect size when the classical baseline is initialised as
+that paper describes, and inverts when the baseline is implemented and trained to its own capability.
+Ablation shows the circuit contributes nothing measurable in one hybrid architecture and
+acts as a fixed feature map in the other. We therefore recommend that comparisons in this
+area report and vary both the initialisation of every arm and the stopping rule, and that
+effect sizes be reported with repeated seeds rather than single runs. The code, the configuration files, the per-run seeds, the raw
+run artefacts and a verification suite that re-derives every number in this paper from
+them are released at \url{https://github.com/ANONYMISED/qapinn-systematic-study}, so that
+any figure here can be checked without rerunning the training.
+
+\begin{thebibliography}{00}
+\bibitem{raissi} M. Raissi, P. Perdikaris, and G. E. Karniadakis, ``Physics-informed neural networks: a deep learning framework for solving forward and inverse problems involving nonlinear partial differential equations,'' \emph{J. Comput. Phys.}, vol. 378, pp. 686--707, 2019.
+\bibitem{schuld} M. Schuld, R. Sweke, and J. J. Meyer, ``Effect of data encoding on the expressive power of variational quantum machine-learning models,'' \emph{Phys. Rev. A}, vol. 103, p. 032430, 2021.
+\bibitem{qcpinn} A. Farea, S. Khan, and M. S. Celebi, ``QCPINN: quantum-classical physics-informed neural networks for solving PDEs,'' \emph{Mach. Learn.: Sci. Technol.}, 2025; arXiv:2503.16678v6.
+\bibitem{mcclean} J. R. McClean, S. Boixo, V. N. Smelyanskiy, R. Babbush, and H. Neven, ``Barren plateaus in quantum neural network training landscapes,'' \emph{Nat. Commun.}, vol. 9, p. 4812, 2018.
+\bibitem{cerezo} M. Cerezo, A. Sone, T. Volkoff, L. Cincio, and P. J. Coles, ``Cost-function-dependent barren plateaus in shallow parametrized quantum circuits,'' \emph{Nat. Commun.}, vol. 12, p. 1791, 2021.
+\bibitem{grant} E. Grant, L. Wossnig, M. Ostaszewski, and M. Benedetti, ``An initialization strategy for addressing barren plateaus in parametrized quantum circuits,'' \emph{Quantum}, vol. 3, p. 214, 2019.
+\bibitem{sim} S. Sim, P. D. Johnson, and A. Aspuru-Guzik, ``Expressibility and entangling capability of parameterized quantum circuits for hybrid quantum-classical algorithms,'' \emph{Adv. Quantum Technol.}, vol. 2, no. 12, p. 1900070, 2019.
+\bibitem{funcke} L. Funcke, T. Hartung, K. Jansen, S. K\"uhn, and P. Stornati, ``Dimensional expressivity analysis of parametric quantum circuits,'' \emph{Quantum}, vol. 5, p. 422, 2021.
+\bibitem{krishnapriyan} A. S. Krishnapriyan, A. Gholami, S. Zhe, R. M. Kirby, and M. W. Mahoney, ``Characterizing possible failure modes in physics-informed neural networks,'' in \emph{Adv. Neural Inf. Process. Syst.}, vol. 34, 2021.
+\bibitem{bowles} J. Bowles, S. Ahmed, and M. Schuld, ``Better than classical? The subtle art of benchmarking quantum machine learning models,'' arXiv:2403.07059, 2024.
+\bibitem{glorot} X. Glorot and Y. Bengio, ``Understanding the difficulty of training deep feedforward neural networks,'' in \emph{Proc. AISTATS}, pp. 249--256, 2010.
+\bibitem{pennylane} V. Bergholm et al., ``PennyLane: automatic differentiation of hybrid quantum-classical computations,'' arXiv:1811.04968, 2018.
+\bibitem{holm} S. Holm, ``A simple sequentially rejective multiple test procedure,'' \emph{Scand. J. Stat.}, vol. 6, pp. 65--70, 1979.
+\bibitem{cliff} N. Cliff, ``Dominance statistics: ordinal analyses to answer ordinal questions,'' \emph{Psychol. Bull.}, vol. 114, no. 3, pp. 494--509, 1993.
+\end{thebibliography}
+
+\end{document}

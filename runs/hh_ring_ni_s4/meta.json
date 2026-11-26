@@ -1,0 +1,52 @@
+{
+  "tag": "hh_ring_ni_s4",
+  "pde": "helmholtz",
+  "pde_kwargs": {},
+  "model_type": "qapinn",
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 2,
+    "entangler_depth": 1,
+    "entangler": "ring",
+    "encoding": "angle",
+    "init_scale": 0.1,
+    "classical_width": 20,
+    "classical_layers": 7
+  },
+  "classical": false,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 8,
+    "classical": 2641,
+    "total": 2649
+  },
+  "seed": 4,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only 2.4% over last 3000 epochs)",
+  "adam_epochs_used": 18000,
+  "final_ema": 673.4161016273474,
+  "adam_seconds": 29087.2,
+  "lbfgs_seconds": 886.4,
+  "total_seconds": 29973.6,
+  "final_total_loss": 239.11056518554688,
+  "final_pde_loss": 229.09744262695312,
+  "final_ic_loss": 0.3165156841278076,
+  "final_bc_loss": 0.6847954392433167,
+  "converged": false,
+  "checkpoints": [],
+  "logged_steps": 18572
+}

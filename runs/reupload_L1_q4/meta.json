@@ -1,0 +1,33 @@
+{
+  "tag": "reupload_L1_q4",
+  "classical": false,
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 1
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 4,
+    "classical": 2641,
+    "total": 2645
+  },
+  "seed": 0,
+  "adam_seconds": 372.5,
+  "lbfgs_seconds": 26.3,
+  "total_seconds": 398.8,
+  "final_total_loss": 0.02480272203683853,
+  "final_pde_loss": 0.020971953868865967,
+  "final_ic_loss": 0.00035690932418219745,
+  "final_bc_loss": 2.616748315631412e-05,
+  "logged_steps": 8568
+}

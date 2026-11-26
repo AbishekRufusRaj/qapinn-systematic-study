@@ -1,0 +1,49 @@
+{
+  "tag": "qc_model1_s0",
+  "model_type": "model1",
+  "classical": true,
+  "model_kwargs": {
+    "hidden": 50,
+    "hidden_blocks": 3
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 7851,
+    "total": 7851
+  },
+  "seed": 0,
+  "convergence_trained": true,
+  "recipe": {
+    "lr": 0.005,
+    "sched_factor": 0.9,
+    "sched_patience": 1000,
+    "clip_norm": 1.0
+  },
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "max_epochs",
+  "adam_epochs_used": 25000,
+  "final_ema": 0.001711478498260817,
+  "final_lr": 0.001937102445000001,
+  "adam_seconds": 158.6,
+  "lbfgs_seconds": 3.9,
+  "total_seconds": 162.6,
+  "final_total_loss": 2.6169527700403705e-05,
+  "final_pde_loss": 2.4523398678866215e-05,
+  "final_ic_loss": 1.3215627348017733e-07,
+  "final_bc_loss": 3.245654411898613e-08,
+  "converged": true,
+  "logged_steps": 25545
+}

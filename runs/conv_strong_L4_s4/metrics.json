@@ -1,0 +1,49 @@
+{
+  "tag": "conv_strong_L4_s4",
+  "classical": false,
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 4,
+    "entangler_depth": 1,
+    "entangler": "strong",
+    "encoding": "angle",
+    "init_scale": null
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 48,
+    "classical": 2641,
+    "total": 2689
+  },
+  "seed": 4,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only -34.9% improvement over last 3000 epochs)",
+  "adam_epochs_used": 21000,
+  "final_ema": 0.010214603631708813,
+  "adam_seconds": 5910.5,
+  "lbfgs_seconds": 97.2,
+  "total_seconds": 6007.7,
+  "final_total_loss": 0.0004709638305939734,
+  "final_pde_loss": 0.00039329365245066583,
+  "final_ic_loss": 4.629031991498778e-06,
+  "final_bc_loss": 3.1379865959024755e-06,
+  "logged_steps": 21527,
+  "rel_l2": 0.018513372821507692,
+  "rel_l2_shock_region": 0.046713721620205685,
+  "rel_l2_smooth_region": 0.005961507716335381,
+  "spectral_bias_ratio": 7.835890489951632,
+  "shock_half_width": 0.1
+}

@@ -1,0 +1,23 @@
+{
+  "tag": "det_rep2a",
+  "model": "model2",
+  "seed": 0,
+  "protocol": "convergence+lbfgs(1400-point refinement, chunked)",
+  "stop_reason": "cap",
+  "adam_epochs_used": 25000,
+  "lbfgs_steps": 500,
+  "lbfgs_evaluations": 532,
+  "refine_interior_points": 1000,
+  "refine_boundary_points_per_edge": 100,
+  "refine_total_points": 1400,
+  "chunk": 500,
+  "params": 2751,
+  "err_u_pct_after_adam": 5.425311088562012,
+  "err_f_pct_after_adam": 1.8461329936981201,
+  "err_u_pct": 1.760345458984375,
+  "err_f_pct": 0.8098425269126892,
+  "adam_seconds": 40.18207097053528,
+  "lbfgs_seconds": 2.3,
+  "resumed": false,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

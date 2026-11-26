@@ -1,0 +1,47 @@
+{
+  "tag": "heat_classical_s5",
+  "pde": "heat",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": null
+  },
+  "classical": true,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 5,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only 0.5% over last 3000 epochs)",
+  "adam_epochs_used": 22500,
+  "final_ema": 0.002180769193419411,
+  "adam_seconds": 180.6,
+  "lbfgs_seconds": 4.5,
+  "total_seconds": 185.1,
+  "final_total_loss": 8.116701064864174e-05,
+  "final_pde_loss": 7.337514398386702e-05,
+  "final_ic_loss": 4.820686285711417e-07,
+  "final_bc_loss": 2.971182198052702e-07,
+  "converged": true,
+  "checkpoints": [],
+  "logged_steps": 23041
+}

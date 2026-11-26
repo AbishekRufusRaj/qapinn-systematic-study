@@ -1,0 +1,23 @@
+{
+  "tag": "sym4_model2_s6",
+  "model": "model2",
+  "seed": 6,
+  "protocol": "convergence+lbfgs(1400-point refinement, chunked, protocol2 summation order)",
+  "stop_reason": "converged",
+  "adam_epochs_used": 4000,
+  "lbfgs_steps": 500,
+  "lbfgs_evaluations": 17,
+  "refine_interior_points": 1000,
+  "refine_boundary_points_per_edge": 100,
+  "refine_total_points": 1400,
+  "chunk": 500,
+  "params": 2751,
+  "err_u_pct_after_adam": 100.33770751953125,
+  "err_f_pct_after_adam": 100.0,
+  "err_u_pct": 101.2883529663086,
+  "err_f_pct": 100.00006103515625,
+  "adam_seconds": 8.392067193984985,
+  "lbfgs_seconds": 0.1,
+  "resumed": false,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

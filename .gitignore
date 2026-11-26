@@ -1,0 +1,18 @@
+# the upstream authors' code -- cloned by setup_qcpinn.sh, never vendored
+external/
+
+# heavy artefacts not needed to re-derive any published number
+*.npy
+*.pt
+*.pth
+*.npz
+
+# build and editor noise
+__pycache__/
+*.pyc
+.DS_Store
+*.bak
+*.aux
+*.log
+*.out
+*.xdv

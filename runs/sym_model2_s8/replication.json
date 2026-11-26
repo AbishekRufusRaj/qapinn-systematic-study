@@ -1,0 +1,15 @@
+{
+  "tag": "sym_model2_s8",
+  "model": "model2",
+  "seed": 8,
+  "protocol": "convergence+lbfgs",
+  "stop_reason": "cap",
+  "adam_epochs_used": 25000,
+  "lbfgs_steps": 500,
+  "params": 2751,
+  "err_u_pct": 9.405481338500977,
+  "err_f_pct": 4.7596588134765625,
+  "adam_seconds": 73.7,
+  "lbfgs_seconds": 1.7,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, models and loss unmodified"
+}

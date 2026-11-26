@@ -1,0 +1,40 @@
+{
+  "tag": "rep_qcpinn_s5",
+  "model": "qcpinn",
+  "seed": 5,
+  "epochs": 20000,
+  "params": 771,
+  "err_u_pct": 5.012190818786621,
+  "err_f_pct": 2.483203887939453,
+  "seconds": 4263.4,
+  "source": "github.com/afrah/QCPINN @ 0dc467be, unmodified",
+  "config": {
+    "batch_size": 64,
+    "epochs": 20000,
+    "lr": 0.005,
+    "seed": 5,
+    "print_every": 100,
+    "log_path": "/Users/abishekrufus/Documents/claude/qapinns/qapinn_systematic_study/runs/rep_qcpinn_s5/authors_log",
+    "input_dim": 2,
+    "output_dim": 1,
+    "num_qubits": 5,
+    "hidden_dim": 50,
+    "num_quantum_layers": 1,
+    "classic_network": [
+      2,
+      50,
+      1
+    ],
+    "q_ansatz": "cascade",
+    "mode": "hybrid",
+    "activation": "tanh",
+    "shots": null,
+    "problem": "helmholtz",
+    "solver": "DV",
+    "device": "cpu",
+    "method": "None",
+    "cutoff_dim": 20,
+    "class": "CVNeuralNetwork1",
+    "encoding": "angle"
+  }
+}

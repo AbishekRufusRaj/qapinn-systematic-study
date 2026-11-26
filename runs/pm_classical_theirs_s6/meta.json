@@ -1,0 +1,47 @@
+{
+  "tag": "pm_classical_theirs_s6",
+  "pde": "helmholtz",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": null
+  },
+  "classical": true,
+  "recipe": "qcpinn",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 0,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 6,
+  "convergence_trained": true,
+  "max_epochs": 20000,
+  "patience": 1000000000,
+  "tol": 0.03,
+  "stop_reason": "max_epochs",
+  "adam_epochs_used": 20000,
+  "final_ema": 6.698864897785061,
+  "adam_seconds": 298.5,
+  "lbfgs_seconds": 0.0,
+  "total_seconds": 298.5,
+  "final_total_loss": 4.305680274963379,
+  "final_pde_loss": 3.884948968887329,
+  "final_ic_loss": 0.025726748630404472,
+  "final_bc_loss": 0.01634635403752327,
+  "converged": false,
+  "checkpoints": [],
+  "logged_steps": 20000
+}

@@ -1,0 +1,36 @@
+{
+  "tag": "seed_strong_L2_s2",
+  "classical": false,
+  "model_kwargs": {
+    "n_qubits": 4,
+    "reupload_layers": 2,
+    "entangler_depth": 1,
+    "entangler": "strong",
+    "encoding": "angle"
+  },
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 24,
+    "classical": 2641,
+    "total": 2665
+  },
+  "seed": 2,
+  "adam_seconds": 681.6,
+  "lbfgs_seconds": 45.6,
+  "total_seconds": 727.2,
+  "final_total_loss": 0.2013317197561264,
+  "final_pde_loss": 0.15963052213191986,
+  "final_ic_loss": 0.004138893913477659,
+  "final_bc_loss": 3.12256597680971e-05,
+  "logged_steps": 8551
+}

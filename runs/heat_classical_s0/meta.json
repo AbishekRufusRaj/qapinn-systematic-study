@@ -1,0 +1,46 @@
+{
+  "tag": "heat_classical_s0",
+  "pde": "heat",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8
+  },
+  "classical": true,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 0,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only 3.0% over last 3000 epochs)",
+  "adam_epochs_used": 24500,
+  "final_ema": 0.0038109903362119136,
+  "adam_seconds": 145.9,
+  "lbfgs_seconds": 3.9,
+  "total_seconds": 149.8,
+  "final_total_loss": 0.00011344165977789089,
+  "final_pde_loss": 0.00010021290654549375,
+  "final_ic_loss": 1.21594177926454e-06,
+  "final_bc_loss": 1.0693354823843038e-07,
+  "converged": true,
+  "checkpoints": [],
+  "logged_steps": 25046
+}

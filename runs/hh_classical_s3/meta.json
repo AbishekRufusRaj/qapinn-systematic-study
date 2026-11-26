@@ -1,0 +1,47 @@
+{
+  "tag": "hh_classical_s3",
+  "pde": "helmholtz",
+  "pde_kwargs": {},
+  "model_type": "classical",
+  "model_kwargs": {
+    "hidden_width": 20,
+    "hidden_layers": 8,
+    "init_gain": null
+  },
+  "classical": true,
+  "recipe": "plain",
+  "budget": {
+    "n_collocation_uniform": 800,
+    "n_collocation_shock": 300,
+    "n_ic": 150,
+    "n_bc": 150,
+    "adam_epochs": 8000,
+    "lbfgs_steps": 500,
+    "lr": 0.001,
+    "w_ic": 10.0,
+    "w_bc": 10.0
+  },
+  "param_counts": {
+    "quantum": 0,
+    "classical": 3021,
+    "total": 3021
+  },
+  "seed": 3,
+  "convergence_trained": true,
+  "max_epochs": 25000,
+  "patience": 3000,
+  "tol": 0.03,
+  "stop_reason": "converged (only -1.6% over last 3000 epochs)",
+  "adam_epochs_used": 21500,
+  "final_ema": 7.065747690644076,
+  "adam_seconds": 278.1,
+  "lbfgs_seconds": 6.9,
+  "total_seconds": 285.0,
+  "final_total_loss": 1.2057805061340332,
+  "final_pde_loss": 0.9002059698104858,
+  "final_ic_loss": 0.002830091631039977,
+  "final_bc_loss": 0.027727356180548668,
+  "converged": false,
+  "checkpoints": [],
+  "logged_steps": 22035
+}
